@@ -1,0 +1,17 @@
+experiment:
+  name: "datm_phase_b_hallucination_r2"
+  editable_files: ["phase_b_experiment.py"]
+  readonly_files: []
+  run_command: "python phase_b_experiment.py"
+  timeout_seconds: 120
+  metric_name: "phase_b_auc"
+  metric_direction: "maximize"
+  max_experiments: 50
+  convergence_window: 5
+  convergence_threshold: 0.001
+  results_file: "results_b2.tsv"
+  work_dir: "."
+
+git:
+  enabled: false
+  auto_create_branch: false

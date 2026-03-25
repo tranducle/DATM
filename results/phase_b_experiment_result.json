@@ -1,0 +1,17 @@
+{
+  "auc": 0.8727889148735036,
+  "f1": 0.8722608230892571,
+  "correct_mean": -6.979335330804312e-10,
+  "incorrect_mean": 0.7764838577420144,
+  "separation": 0.7764838584399479,
+  "nli_model": "cross-encoder/nli-deberta-v3-large",
+  "embedding_model": "all-mpnet-base-v2",
+  "signal_weights": {
+    "contradiction": 1.0,
+    "entail_gap": 0.45,
+    "cosine_dist": 4.4,
+    "length_ratio": 1.45
+  },
+  "normalize": true,
+  "max_incorrect_per_q": 10
+}

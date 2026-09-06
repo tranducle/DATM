@@ -42,7 +42,7 @@ The computational evidence is bounded. It includes controlled domain-boundary te
 
 **Phase C: Exfiltration-template evaluation.** Uses constructed benign and exfiltration templates. Evaluation is template-disjoint. The repository includes the original template task, a stronger hybrid lexical comparator, a paraphrastic stress set, and a marker-scrubbed stress set.
 
-**Phase D: Sensitivity analysis.** Uses synthetic Gaussian embeddings to examine how detection behavior changes across attack-shift levels and candidate boundary thresholds.
+**Phase D: Sensitivity analysis.** Uses synthetic Gaussian embeddings to examine how detection behavior changes across adversarial mean-shift levels and candidate boundary thresholds.
 
 ## Quick start
 

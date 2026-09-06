@@ -26,10 +26,12 @@ REQUIRED = [
     "experiments/phase_c_exfiltration.py",
     "experiments/phase_c_stress.py",
     "experiments/phase_d_sensitivity.py",
+    "tools/test_phase_d_metrics.py",
     "results/paper_results_manifest.json",
     "results/phase_c_operating_points.json",
     "results/phase_c_matched_thresholds.json",
     "results/phase_d_reference_sweep.csv",
+    "results/phase_d_sensitivity.json",
 ]
 
 FORBIDDEN_SUFFIXES = {".tex", ".pdf", ".png", ".jpg", ".jpeg", ".svg", ".docx", ".pptx"}

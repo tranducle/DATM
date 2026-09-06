@@ -809,9 +809,9 @@
     "mc_runs_per_cell": 300,
     "n_benign": 500,
     "n_adversarial": 200,
-    "benign_scale": 0.01,
-    "adversarial_scale": 0.65,
-    "sophistication_levels": [
+    "benign_scale": 0.1,
+    "adversarial_scale": 0.15,
+    "adversarial_mean_shift_levels": [
       0.05,
       0.1,
       0.15,
@@ -823,8 +823,11 @@
     "rho_grid": {
       "min": 0.05,
       "max_exclusive": 0.5,
-      "step": 0.01
+      "step": 0.01,
+      "n_values": 45
     },
-    "reference_sweep": "results/phase_d_reference_sweep.csv"
+    "standard_f1": "computed within each Monte Carlo run from TP, FP, and FN counts, then averaged within each cell",
+    "reference_sweep": "results/phase_d_reference_sweep.csv",
+    "full_output": "results/phase_d_sensitivity.json"
   }
 }

@@ -138,11 +138,12 @@ Configuration:
 - embedding dimension `384`
 - 300 Monte Carlo runs per `(sigma, rho)` cell
 - 500 benign and 200 adversarial synthetic samples per run
-- benign Gaussian scale `0.01`
-- adversarial Gaussian scale `0.65`
-- attack-shift levels `0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50`
+- benign Gaussian scale `0.10`
+- adversarial Gaussian scale `0.15`
+- adversarial mean-shift levels `0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50`
 - candidate threshold grid from `0.05` to `<0.50` in increments of `0.01`
 - dimension-normalized Euclidean distance
+- standard F1 computed within each Monte Carlo run from the declared 200 adversarial and 500 benign samples, then averaged across runs for each `(sigma, rho)` cell
 
 **Reference sweep:** `results/phase_d_reference_sweep.csv`
 

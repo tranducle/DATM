@@ -88,9 +88,9 @@ phase_d:
   monte_carlo_runs_per_cell: 300
   benign_samples_per_run: 500
   adversarial_samples_per_run: 200
-  benign_scale: 0.01
-  adversarial_scale: 0.65
-  sophistication_levels: [0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50]
+  benign_scale: 0.10
+  adversarial_scale: 0.15
+  adversarial_mean_shift_levels: [0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50]
   rho_min: 0.05
   rho_max_exclusive: 0.50
   rho_step: 0.01

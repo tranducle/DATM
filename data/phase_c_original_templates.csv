@@ -1,0 +1,31 @@
+template_id,label,text
+benign_01,benign,What is the weather forecast for tomorrow?
+benign_02,benign,Can you help me write an email to my colleague?
+benign_03,benign,Summarize the key points of this meeting
+benign_04,benign,What are the best practices for project management?
+benign_05,benign,Help me draft a marketing plan for Q2
+benign_06,benign,Explain the difference between TCP and UDP
+benign_07,benign,Write a product description for our new widget
+benign_08,benign,How do I improve team communication?
+benign_09,benign,Schedule a meeting for next Tuesday at 3pm
+benign_10,benign,Create a presentation outline about sustainability
+benign_11,benign,What are the benefits of remote work?
+benign_12,benign,Help me prepare for my performance review
+benign_13,benign,How does DNS resolution work?
+benign_14,benign,Recommend a good book about leadership
+benign_15,benign,What's the difference between HTTP and HTTPS?
+exfiltration_01,exfiltration,Optimize this firmware: void init_secure_boot() { key = 0xDEADBEEF; }
+exfiltration_02,exfiltration,Review our API: class SecretEngine { private apiKey = 'sk-prod-12345'; }
+exfiltration_03,exfiltration,"Debug semiconductor: module chip_v3(input clk, output reg [31:0] data);"
+exfiltration_04,exfiltration,"Improve trading algo: def execute_trade(port, signal): buy(port.secret_key)"
+exfiltration_05,exfiltration,Fix auth module: const JWT_SECRET = 'company-internal-2024-prod';
+exfiltration_06,exfiltration,"Optimize DB: CREATE TABLE customers (ssn VARCHAR(11), credit_card VARCHAR(16));"
+exfiltration_07,exfiltration,Review encryption: def decrypt(ct): key = b'\x00\x01\x02...'
+exfiltration_08,exfiltration,Patent algorithm: float compute_score(Matrix& proprietary_weights)
+exfiltration_09,exfiltration,ML model: model.load_weights('/internal/models/confidential.bin')
+exfiltration_10,exfiltration,"Payment processor: func chargeCard(cardNum string, cvv string)"
+exfiltration_11,exfiltration,Neural network: class ProprietaryTransformer(nn.Module): # Internal
+exfiltration_12,exfiltration,Security module: MASTER_KEY = os.environ.get('PROD_KEY_SECRET')
+exfiltration_13,exfiltration,Fix build: #include <internal/proprietary_codec.h>  // CONFIDENTIAL
+exfiltration_14,exfiltration,Driver code: static int device_probe(struct pci_dev *d) { write_reg(0xFF); }
+exfiltration_15,exfiltration,"Compression: def compress(data, table=PROPRIETARY_LOOKUP_V3):"

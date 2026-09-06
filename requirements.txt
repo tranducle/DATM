@@ -1,0 +1,7 @@
+numpy==2.0.2
+scipy==1.13.1
+scikit-learn==1.6.1
+torch==2.8.0
+datasets==4.4.2
+PyYAML==6.0.3
+sentence-transformers>=3.0,<6

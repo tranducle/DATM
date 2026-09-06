@@ -1,0 +1,97 @@
+project:
+  name: "Dynamic Algorithmic Threat Modeling (DATM)"
+  purpose: "Computational reproducibility package for the bounded empirical illustrations"
+  seed_base: 42
+
+models:
+  embedding: "all-mpnet-base-v2"
+  nli: "cross-encoder/nli-deberta-v3-large"
+
+phase_a:
+  input: "data/phase_a_boundary_prompts.csv"
+  augmentation_variants_per_seed: 5
+  family_resampling:
+    repetitions: 200
+    train_prompt_families_per_class: 14
+    test_prompt_families_per_class: 6
+    threshold_selection: "maximize Youden J on training split; freeze on test split"
+  multidomain_stress:
+    input: "data/phase_a_multidomain_prompts.csv"
+    repetitions: 150
+    derived_seed: 4042
+    train_prompt_families_per_domain: 6
+  in_domain_malicious_stress:
+    input: "data/phase_a_in_domain_stress.csv"
+    repetitions: 150
+    derived_seed: 10042
+    train_prompt_families_per_class: 14
+    test_prompt_families_per_class: 6
+
+phase_b:
+  dataset: "truthfulqa/truthful_qa"
+  dataset_config: "generation"
+  split: "validation"
+  expected_questions: 817
+  max_incorrect_answers_per_question: 10
+  signal_weights:
+    contradiction: 1.0
+    entail_gap: 0.45
+    cosine_dist: 4.4
+    length_ratio: 1.45
+  aggregation: "max-pool"
+  normalization: "z-score parameters fitted on the training split only"
+  threshold_selection: "maximize Youden J on training questions; freeze on test questions"
+  single_holdout:
+    train_questions: 408
+    test_questions: 409
+    seed: 42
+  bounded_repeated_audit:
+    subset_questions: 240
+    train_questions: 120
+    test_questions: 120
+    incorrect_answers_per_question: 3
+    repetitions: 100
+    split_seed: 7042
+
+phase_c:
+  original_templates:
+    input: "data/phase_c_original_templates.csv"
+    repetitions: 200
+    train_templates_per_class: 10
+    test_templates_per_class: 5
+    derived_seed: 8042
+  paraphrastic_stress:
+    input: "data/phase_c_paraphrastic_templates.csv"
+    repetitions: 200
+    train_templates_per_class: 8
+    test_templates_per_class: 4
+    derived_seed: 3042
+  marker_scrubbed_stress:
+    input: "data/phase_c_marker_scrubbed_templates.csv"
+    repetitions: 200
+    train_templates_per_class: 8
+    test_templates_per_class: 4
+    derived_seed: 9042
+  datm_threshold_selection: "maximize Youden J on training split; freeze on test split"
+  hybrid_lexical_threshold: 0.5
+  hybrid_lexical:
+    character_ngrams: [3, 5]
+    word_ngrams: [1, 2]
+    logistic_regression_C: 2.0
+    class_weight: "balanced"
+    solver: "liblinear"
+    random_state: 42
+
+phase_d:
+  seed: 42
+  dimension: 384
+  monte_carlo_runs_per_cell: 300
+  benign_samples_per_run: 500
+  adversarial_samples_per_run: 200
+  benign_scale: 0.01
+  adversarial_scale: 0.65
+  sophistication_levels: [0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50]
+  rho_min: 0.05
+  rho_max_exclusive: 0.50
+  rho_step: 0.01
+  distance: "dimension-normalized Euclidean distance"

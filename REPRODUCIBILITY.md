@@ -68,8 +68,13 @@ Signal standardization is fitted using training questions only. Incorrect-answer
 - base seed `42`
 - 408 training questions
 - 409 test questions
+- raw pairwise feature scoring covers 2,036 training pairs and 2,074 test pairs
+- incorrect candidate scores are max-pooled within each question before held-out classification
+- pooled evaluation contains 816 training observations and 818 test observations
+- held-out test balance is 409 benchmark-correct negatives and 409 pooled benchmark-incorrect positives
 - threshold selected on training data by maximizing Youden J
 - threshold frozen on test data
+- at threshold `-0.2024061428888519`, the test confusion matrix is TP 342, FN 67, FP 196, TN 213
 
 ### Bounded repeated audit
 

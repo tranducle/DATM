@@ -56,6 +56,7 @@ Phase B downloads TruthfulQA through the Hugging Face `datasets` interface. The 
 Run the repository checks with:
 
 ```bash
+python tools/test_phase_b_reporting.py
 python tools/test_phase_d_metrics.py
 python tools/validate_repository.py
 ```

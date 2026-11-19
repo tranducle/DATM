@@ -122,7 +122,23 @@ def evaluate_split(correct_features, incorrect_features, train_idx, test_idx, we
     test_labels = np.concatenate([np.zeros(len(test_correct)), np.ones(len(test_incorrect))])
     test_scores = np.concatenate([test_correct, test_incorrect])
     threshold, train_auc = find_best_threshold(train_labels, train_scores)
-    return {"train_auc": train_auc, "threshold": threshold, **metrics_at_threshold(test_labels, test_scores, threshold)}
+    metrics = metrics_at_threshold(test_labels, test_scores, threshold)
+    pred = (test_scores > threshold).astype(int)
+    tp = int(np.sum((test_labels == 1) & (pred == 1)))
+    fn = int(np.sum((test_labels == 1) & (pred == 0)))
+    fp = int(np.sum((test_labels == 0) & (pred == 1)))
+    tn = int(np.sum((test_labels == 0) & (pred == 0)))
+    return {
+        "train_auc": train_auc,
+        "threshold": threshold,
+        **metrics,
+        "test_positive": int(np.sum(test_labels == 1)),
+        "test_negative": int(np.sum(test_labels == 0)),
+        "tp": tp,
+        "fn": fn,
+        "fp": fp,
+        "tn": tn,
+    }
 
 
 def summarize_rows(rows):
@@ -145,6 +161,8 @@ def run() -> dict[str, object]:
     train_idx = np.sort(idx[:408])
     test_idx = np.sort(idx[408:])
     holdout = evaluate_split(correct_features, incorrect_features, train_idx, test_idx, FULL_WEIGHTS, 10)
+    train_incorrect_candidates = int(sum(min(10, len(incorrect[i])) for i in train_idx))
+    test_incorrect_candidates = int(sum(min(10, len(incorrect[i])) for i in test_idx))
 
     subset_rng = np.random.default_rng(SEED_BASE)
     subset_idx = np.arange(len(questions))
@@ -170,7 +188,21 @@ def run() -> dict[str, object]:
         "nli_model": NLI_MODEL,
         "embedding_model": EMBEDDING_MODEL,
         "full_weights": FULL_WEIGHTS,
-        "single_holdout": {"train_questions": 408, "test_questions": 409, **holdout},
+        "single_holdout": {
+            "train_questions": 408,
+            "test_questions": 409,
+            "evaluation_unit": "question level after max pooling incorrect candidates",
+            "positive_class": "pooled benchmark incorrect",
+            "raw_train_correct_candidates": 408,
+            "raw_train_incorrect_candidates": train_incorrect_candidates,
+            "raw_train_pairs": 408 + train_incorrect_candidates,
+            "raw_test_correct_candidates": 409,
+            "raw_test_incorrect_candidates": test_incorrect_candidates,
+            "raw_test_pairs": 409 + test_incorrect_candidates,
+            "pooled_train_observations": 816,
+            "pooled_test_observations": 818,
+            **holdout,
+        },
         "bounded_repeated_audit": {
             "subset_questions": 240,
             "train_questions": 120,

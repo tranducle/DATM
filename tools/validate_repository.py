@@ -25,6 +25,7 @@ REQUIRED = [
     "experiments/phase_c_exfiltration.py",
     "experiments/phase_c_stress.py",
     "experiments/phase_d_sensitivity.py",
+    "tools/test_phase_b_reporting.py",
     "tools/test_phase_d_metrics.py",
     "results/paper_results_manifest.json",
     "results/phase_c_operating_points.json",

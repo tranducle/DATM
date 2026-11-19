@@ -27,7 +27,7 @@ Phase A evaluates a fixed benign-centroid distance score using constructed autom
 
 Phase B uses the public TruthfulQA validation split as a response-integrity proxy. The analysis compares a fixed multi-signal score with contradiction-only scoring under question-level hold-out and repeated bounded audits.
 
-Phase C evaluates constructed benign and exfiltration templates with template-disjoint resampling. It includes a hybrid lexical comparator, a paraphrastic stress set, and a marker-scrubbed stress set.
+Phase C evaluates constructed benign and exfiltration templates with template-disjoint resampling. The original and marker-scrubbed comparisons use a hybrid word-plus-character lexical comparator. The auxiliary paraphrastic condition retains its historical character-ngram logistic comparator and a transparent regex proxy.
 
 Phase D separates two factors in a synthetic Gaussian model. The primary condition uses equal benign and adversarial scales of 0.10. An unequal-variance comparator uses adversarial scale 0.15. Both conditions share the same standard-normal draws within each paired run. ROC AUC is the primary read-out, while threshold-level metrics describe the range of candidate rho values for which mean F1 reaches at least 0.95.
 
@@ -56,7 +56,10 @@ Phase B downloads TruthfulQA through the Hugging Face `datasets` interface. The 
 Run the repository checks with:
 
 ```bash
+python tools/test_phase_a_protocol.py
 python tools/test_phase_b_reporting.py
+python tools/test_phase_c_regex.py
+python tools/test_threshold_semantics.py
 python tools/test_phase_d_metrics.py
 python tools/validate_repository.py
 ```
@@ -64,6 +67,8 @@ python tools/validate_repository.py
 ## Reproducibility conventions
 
 The base random seed is 42. Derived seeds, split sizes, model identifiers, score weights, repetition counts, and threshold rules are recorded in `configs/reproducibility.yaml` and described in `REPRODUCIBILITY.md`.
+
+Threshold-dependent classification uses score greater than or equal to the selected threshold, matching the operating points returned by scikit-learn ROC curves.
 
 Phase D uses common random numbers across the two variance conditions. For a fixed mean shift and run index, the same benign and adversarial standard-normal draws are reused before applying the condition-specific adversarial scale. This pairing isolates the effect of scale while reducing Monte Carlo noise in the condition contrast.
 

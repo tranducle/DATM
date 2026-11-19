@@ -123,7 +123,7 @@ def evaluate_split(correct_features, incorrect_features, train_idx, test_idx, we
     test_scores = np.concatenate([test_correct, test_incorrect])
     threshold, train_auc = find_best_threshold(train_labels, train_scores)
     metrics = metrics_at_threshold(test_labels, test_scores, threshold)
-    pred = (test_scores > threshold).astype(int)
+    pred = (test_scores >= threshold).astype(int)
     tp = int(np.sum((test_labels == 1) & (pred == 1)))
     fn = int(np.sum((test_labels == 1) & (pred == 0)))
     fp = int(np.sum((test_labels == 0) & (pred == 1)))
@@ -151,7 +151,7 @@ def run() -> dict[str, object]:
     questions, correct, incorrect = load_truthfulqa()
     if len(questions) != 817:
         raise RuntimeError(f"Expected 817 TruthfulQA questions, found {len(questions)}")
-    nli_model = CrossEncoder(NLI_MODEL, default_activation_function=None)
+    nli_model = CrossEncoder(NLI_MODEL, activation_fn=None)
     emb_model = SentenceTransformer(EMBEDDING_MODEL)
     correct_features, incorrect_features = build_feature_store(questions, correct, incorrect, nli_model, emb_model)
 

@@ -11,6 +11,8 @@ from common import DATA_DIR, load_texts, score_centroid_detector, split_indices,
 
 SEED_BASE = 42
 EMBEDDING_MODEL = "all-mpnet-base-v2"
+BOUNDARY_BENIGN_PREFIX = "I'd like to know:"
+BOUNDARY_ATTACK_PREFIX = "Quick question:"
 
 
 def deterministic_augment(prompt: str, prefix: str) -> list[str]:
@@ -38,13 +40,14 @@ def run_two_class_resampling(
     n_train: int,
     n_repetitions: int,
     seed: int,
-    prefix: str,
+    benign_prefix: str,
+    attack_prefix: str,
 ) -> dict[str, object]:
     groups = load_texts(csv_name)
     benign = groups[benign_label]
     attack = groups[attack_label]
-    benign_bank = encode_families(model, benign, prefix)
-    attack_bank = encode_families(model, attack, prefix)
+    benign_bank = encode_families(model, benign, benign_prefix)
+    attack_bank = encode_families(model, attack, attack_prefix)
     rng = np.random.default_rng(seed)
     rows = []
     for _ in range(n_repetitions):
@@ -132,12 +135,20 @@ def run() -> dict[str, object]:
         "embedding_model": EMBEDDING_MODEL,
         "boundary_family_resampling": run_two_class_resampling(
             model, "phase_a_boundary_prompts.csv", "automotive", "negative",
-            n_train=14, n_repetitions=200, seed=SEED_BASE, prefix="Automotive request:",
+            n_train=14,
+            n_repetitions=200,
+            seed=SEED_BASE,
+            benign_prefix=BOUNDARY_BENIGN_PREFIX,
+            attack_prefix=BOUNDARY_ATTACK_PREFIX,
         ),
         "multidomain_benign_stress": run_multidomain(model),
         "in_domain_malicious_stress": run_two_class_resampling(
             model, "phase_a_in_domain_stress.csv", "benign", "malicious",
-            n_train=14, n_repetitions=150, seed=SEED_BASE + 10000, prefix="Automotive request:",
+            n_train=14,
+            n_repetitions=150,
+            seed=SEED_BASE + 10000,
+            benign_prefix="Automotive request:",
+            attack_prefix="Automotive request:",
         ),
     }
     write_json("phase_a_results.json", result)

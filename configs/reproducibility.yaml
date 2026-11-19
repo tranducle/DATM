@@ -2,6 +2,7 @@ project:
   name: "Dynamic Algorithmic Threat Modeling (DATM)"
   purpose: "Computational reproducibility package for the bounded empirical illustrations"
   seed_base: 42
+  threshold_semantics: "positive when score is greater than or equal to threshold"
 
 models:
   embedding: "all-mpnet-base-v2"
@@ -10,6 +11,8 @@ models:
 phase_a:
   input: "data/phase_a_boundary_prompts.csv"
   augmentation_variants_per_seed: 5
+  automotive_prefix: "I'd like to know:"
+  negative_prefix: "Quick question:"
   family_resampling:
     repetitions: 200
     train_prompt_families_per_class: 14
@@ -66,6 +69,7 @@ phase_c:
     train_templates_per_class: 8
     test_templates_per_class: 4
     derived_seed: 3042
+    comparator: "character 3 to 5 gram logistic regression"
   marker_scrubbed_stress:
     input: "data/phase_c_marker_scrubbed_templates.csv"
     repetitions: 200

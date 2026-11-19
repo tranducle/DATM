@@ -2,6 +2,7 @@
   "scope": "Phase C operating-point summary using the fixed evaluation protocol and 200 balanced template-level resamples per condition.",
   "embedding_model": "all-mpnet-base-v2",
   "seed_base": 42,
+  "threshold_semantics": "positive when score is greater than or equal to the selected threshold",
   "original": {
     "name": "original_template_resampling",
     "n_repetitions": 200,
@@ -121,12 +122,12 @@
         "max": 1.0
       },
       "f1": {
-        "mean": 0.6845238095238093,
-        "std": 0.16665958034821848,
-        "min": 0.3333333333333333,
-        "p05": 0.3333333333333333,
-        "median": 0.75,
-        "p95": 0.8888888888888888,
+        "mean": 0.9666666666666669,
+        "std": 0.05091750772173158,
+        "min": 0.8888888888888888,
+        "p05": 0.8888888888888888,
+        "median": 1.0,
+        "p95": 1.0,
         "max": 1.0
       },
       "precision": {
@@ -139,12 +140,12 @@
         "max": 1.0
       },
       "recall": {
-        "mean": 0.544,
-        "std": 0.18884914614580603,
-        "min": 0.2,
-        "p05": 0.2,
-        "median": 0.6,
-        "p95": 0.8,
+        "mean": 0.94,
+        "std": 0.09165151389911678,
+        "min": 0.8,
+        "p05": 0.8,
+        "median": 1.0,
+        "p95": 1.0,
         "max": 1.0
       },
       "operating_threshold": {

@@ -8,6 +8,7 @@ This document records the computational provenance for the DATM study. It is org
 - Embedding model for Phases A and C: `all-mpnet-base-v2`
 - NLI model for Phase B: `cross-encoder/nli-deberta-v3-large`
 - Threshold-dependent metrics use a threshold selected on the training split and then frozen on the corresponding test split unless a fixed threshold is explicitly stated.
+- Thresholded predictions classify a score equal to the selected threshold as positive. This matches the threshold semantics used by scikit-learn ROC curves.
 - The positive class is the negative/adversarial class in Phase A, benchmark-incorrect responses in Phase B, and exfiltration in Phase C.
 - Small constructed datasets are included directly under `data/`. TruthfulQA is public and is loaded from its public dataset source rather than redistributed.
 
@@ -20,6 +21,8 @@ The machine-readable configuration is `configs/reproducibility.yaml`.
 **Input:** `data/phase_a_boundary_prompts.csv`
 
 The dataset contains 20 automotive prompt families and 20 negative prompt families. Each seed prompt is deterministically expanded into five surface variants: the original prompt, lowercase text, an appended detail request, a prefixed domain request, and a punctuation-stripped polite form. Family-disjoint evaluation prevents surface variants from the same seed from crossing the train/test boundary.
+
+The prefixed variant uses `I'd like to know:` for automotive prompts and `Quick question:` for negative prompts. These class-specific prefixes are part of the recorded Phase A protocol.
 
 **Script:** `experiments/phase_a_boundary.py`
 
@@ -63,6 +66,8 @@ The multi-signal score uses:
 
 Signal standardization is fitted using training questions only. Incorrect-answer scores are max-pooled at the question level.
 
+The original Phase B run recorded the model identifiers but did not content-address the exact remote model snapshots and full software environment. A current revalidation reproduced the held-out precision, recall, F1, and confusion counts exactly, while the continuous AUC shifted slightly. The committed manifest therefore remains the canonical numerical record for Phase B, and the repository treats exact score-level replay across model or library revisions as a reproducibility limitation.
+
 ### Single hold-out
 
 - base seed `42`
@@ -105,6 +110,8 @@ The dataset contains 15 unique benign templates and 15 unique exfiltration templ
 - hybrid lexical comparator uses character 3-to-5 grams and word 1-to-2 grams with balanced logistic regression and fixed probability threshold `0.5`
 - regex proxy is retained as a transparent weak baseline
 
+For the regex proxy, the graded match-count score yields mean AUC 0.970 across the 200 resamples. The training-selected threshold is 1.0, and ROC-consistent thresholding gives mean precision 1.000, recall 0.940, and F1 0.967.
+
 **Detailed output:** `results/phase_c_operating_points.json`
 
 ### Paraphrastic stress
@@ -116,7 +123,9 @@ The dataset contains 15 unique benign templates and 15 unique exfiltration templ
 - 200 resamples
 - derived seed `3042`
 
-This set is retained as an auxiliary stress test. Its contrast with regex is interpreted only as evidence of regex brittleness, not as evidence of general semantic superiority.
+The historical lexical comparator for this condition is a character 3-to-5 gram logistic regression, not the word-plus-character hybrid used for the original and marker-scrubbed comparisons. The regex proxy uses the same training-selected Youden threshold rule as the original regex comparison.
+
+With ROC-consistent threshold semantics, the paraphrastic regex proxy has mean AUC 0.735, precision 0.873, recall 0.553, and F1 0.655. DATM retains higher mean AUC 0.953 and F1 0.855, but the corrected regex operating point is materially stronger than the previously reported strict-threshold result.
 
 ### Marker-scrubbed stress
 
@@ -128,10 +137,6 @@ This set is retained as an auxiliary stress test. Its contrast with regex is int
 - derived seed `9042`
 
 The marker-scrubbed condition removes obvious lexical markers that made the original synthetic task easier. The detailed operating-point output is in `results/phase_c_operating_points.json`.
-
-### Auxiliary matched-threshold diagnostic
-
-`results/phase_c_matched_thresholds.json` records an auxiliary diagnostic in which both DATM and the hybrid lexical comparator select Youden J on the training split. This diagnostic is provided for transparency and is not substituted for the primary fixed-0.5 hybrid comparison reported in the study.
 
 ## Phase D: controlled Gaussian sensitivity analysis
 

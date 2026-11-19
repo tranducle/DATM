@@ -39,7 +39,7 @@ def find_best_threshold(labels: np.ndarray, scores: np.ndarray) -> tuple[float, 
 
 
 def metrics_at_threshold(labels: np.ndarray, scores: np.ndarray, threshold: float) -> dict[str, float]:
-    pred = (scores > threshold).astype(int)
+    pred = (scores >= threshold).astype(int)
     precision, recall, f1, _ = precision_recall_fscore_support(
         labels, pred, average="binary", zero_division=0
     )

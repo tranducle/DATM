@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "prepared_for_reproducibility": "2026-09-06",
+  "prepared_for_reproducibility": "2026-11-19",
   "seed_base": 42,
   "phase_a": {
     "headline": {
@@ -806,12 +806,16 @@
   "phase_d": {
     "seed": 42,
     "dimension": 384,
-    "mc_runs_per_cell": 300,
+    "mc_runs_per_condition_shift": 300,
     "n_benign": 500,
     "n_adversarial": 200,
     "benign_scale": 0.1,
-    "adversarial_scale": 0.15,
-    "adversarial_mean_shift_levels": [
+    "conditions": {
+      "equal_variance": 0.1,
+      "unequal_variance_comparator": 0.15
+    },
+    "mean_shift_levels": [
+      0,
       0.05,
       0.1,
       0.15,
@@ -826,8 +830,25 @@
       "step": 0.01,
       "n_values": 45
     },
-    "standard_f1": "computed within each Monte Carlo run from TP, FP, and FN counts, then averaged within each cell",
-    "reference_sweep": "results/phase_d_reference_sweep.csv",
-    "full_output": "results/phase_d_sensitivity.json"
+    "common_random_numbers": true,
+    "primary_metric": "ROC AUC",
+    "headline": {
+      "equal_variance_auc_at_zero_shift": 0.5162049666666667,
+      "equal_variance_auc_at_shift_0_05": 0.9876052333333335,
+      "equal_variance_auc_from_shift_0_10": 1,
+      "unequal_variance_auc_at_zero_shift": 1,
+      "equal_variance_first_f1_0_95_band": {
+        "mean_shift": 0.1,
+        "rho_min": 0.11,
+        "rho_max": 0.13
+      }
+    },
+    "canonical_outputs": [
+      "results/phase_d_auc_summary.csv",
+      "results/phase_d_threshold_summary.csv",
+      "results/phase_d_threshold_bands.csv",
+      "results/phase_d_condition_contrasts.csv",
+      "results/phase_d_sensitivity.json"
+    ]
   }
 }

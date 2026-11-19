@@ -24,7 +24,6 @@ results/generated/
 *.docx
 *.pptx
 manuscript/
-figures/
 review/
 responses/
 
@@ -32,3 +31,7 @@ responses/
 .DS_Store
 .vscode/
 .idea/
+
+# Reproducible figure source
+!figures/
+!figures/phase_d_sensitivity.tex

@@ -1,0 +1,173 @@
+\documentclass[tikz,border=6pt]{standalone}
+
+
+\usepackage{tikz}
+\usepackage{fontspec}
+\setmainfont{CMU Serif}
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usetikzlibrary{intersections}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}
+
+\definecolor{CoreNavy}{RGB}{72,92,120}
+\definecolor{MutedRust}{RGB}{174,112,96}
+\definecolor{MidGray}{RGB}{153,160,168}
+\definecolor{Ink}{RGB}{40,45,52}
+
+\pgfplotstableread[col sep=comma]{phase_d_equal_variance.csv}\equaldat
+\pgfplotstableread[col sep=comma]{phase_d_unequal_variance.csv}\submitdat
+
+\pgfplotsset{
+  every axis/.append style={
+    font=\footnotesize,
+    axis line style={Ink!80,line width=0.55pt},
+    tick style={Ink!80,line width=0.45pt},
+    tick label style={text=Ink},
+    label style={text=Ink},
+    major tick length=1.2mm,
+    grid style={MidGray!32,line width=0.3pt},
+  },
+  equal line/.style={
+    CoreNavy,
+    line width=1.25pt,
+    mark=*,
+    mark size=1.8pt,
+    mark options={solid,fill=CoreNavy,draw=CoreNavy}
+  },
+  submitted line/.style={
+    MutedRust,
+    line width=1.0pt,
+    dashed,
+    mark=square*,
+    mark size=1.6pt,
+    mark options={solid,fill=MutedRust,draw=MutedRust}
+  },
+  quiet reference/.style={MidGray,densely dotted,line width=0.7pt},
+}
+
+\begin{document}
+\begin{tikzpicture}
+
+\begin{axis}[
+  name=auc,
+  width=110mm,
+  height=48mm,
+  xmin=-0.015,
+  xmax=0.515,
+  ymin=0.45,
+  ymax=1.025,
+  xtick={0,0.05,0.10,0.20,0.30,0.40,0.50},
+  xticklabels={0,0.05,0.10,0.20,0.30,0.40,0.50},
+  ylabel={ROC AUC},
+  ymajorgrids,
+  axis x line*=bottom,
+  axis y line*=left,
+  legend style={
+    at={(0.98,0.30)},
+    anchor=south east,
+    draw=MidGray!45,
+    fill=white,
+    fill opacity=0.96,
+    text opacity=1,
+    rounded corners=1pt,
+    inner sep=2.2pt,
+    font=\scriptsize,
+    legend columns=1,
+    row sep=0.5pt
+  },
+  clip=false,
+]
+
+\addplot[draw=none,forget plot,name path=subhi]
+  table[x=mean_shift,y=auc_p975]{\submitdat};
+\addplot[draw=none,forget plot,name path=sublo]
+  table[x=mean_shift,y=auc_p025]{\submitdat};
+\addplot[draw=none,fill=MutedRust,fill opacity=0.10,forget plot]
+  fill between[of=subhi and sublo];
+
+\addplot[draw=none,forget plot,name path=eqhi]
+  table[x=mean_shift,y=auc_p975]{\equaldat};
+\addplot[draw=none,forget plot,name path=eqlo]
+  table[x=mean_shift,y=auc_p025]{\equaldat};
+\addplot[draw=none,fill=CoreNavy,fill opacity=0.15,forget plot]
+  fill between[of=eqhi and eqlo];
+
+\addplot[submitted line] table[x=mean_shift,y=auc_mean]{\submitdat};
+\addlegendentry{Submitted scales 0.10/0.15}
+
+\addplot[equal line] table[x=mean_shift,y=auc_mean]{\equaldat};
+\addlegendentry{Equal scales 0.10/0.10}
+
+\addplot[quiet reference,forget plot] coordinates {(-0.015,0.5) (0.515,0.5)};
+
+\node[anchor=south west,font=\scriptsize,text=MidGray,inner sep=1pt]
+  at (axis cs:0.38,0.518) {chance AUC};
+\node[anchor=south west,font=\scriptsize,text=CoreNavy,inner sep=1pt]
+  at (axis cs:0.008,0.548) {0.516};
+\node[anchor=north west,font=\scriptsize,text=MutedRust,inner sep=1pt]
+  at (axis cs:0.008,0.970) {1.000};
+
+\node[anchor=south west,font=\footnotesize\bfseries,text=Ink]
+  at (rel axis cs:0,1.015) {(a)};
+
+\end{axis}
+
+\begin{axis}[
+  name=band,
+  at={(auc.south west)},
+  anchor=north west,
+  yshift=-10mm,
+  width=110mm,
+  height=50mm,
+  xmin=-0.015,
+  xmax=0.515,
+  ymin=0.075,
+  ymax=0.51,
+  xtick={0,0.05,0.10,0.20,0.30,0.40,0.50},
+  xticklabels={0,0.05,0.10,0.20,0.30,0.40,0.50},
+  xlabel={Normalized per-coordinate mean shift $\sigma$},
+  ylabel={Qualifying threshold $\rho$},
+  ymajorgrids,
+  axis x line*=bottom,
+  axis y line*=left,
+  clip=false,
+]
+
+\addplot+[
+  submitted line,
+  unbounded coords=discard,
+  error bars/.cd,
+  y dir=both,
+  y explicit
+]
+  table[x=mean_shift,y=band_mid,y error=band_err]{\submitdat};
+
+\addplot+[
+  equal line,
+  unbounded coords=discard,
+  error bars/.cd,
+  y dir=both,
+  y explicit
+]
+  table[x=mean_shift,y=band_mid,y error=band_err]{\equaldat};
+
+\addplot[
+  only marks,
+  mark=x,
+  mark size=2.4pt,
+  line width=0.9pt,
+  CoreNavy,
+  forget plot
+] coordinates {(0,0.0875) (0.05,0.0875)};
+
+
+\node[anchor=south west,font=\footnotesize\bfseries,text=Ink]
+  at (rel axis cs:0,1.015) {(b)};
+
+\end{axis}
+
+\end{tikzpicture}
+\end{document}

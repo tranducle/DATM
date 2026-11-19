@@ -128,41 +128,52 @@ The marker-scrubbed condition removes obvious lexical markers that made the orig
 
 `results/phase_c_matched_thresholds.json` records an auxiliary diagnostic in which both DATM and the hybrid lexical comparator select Youden J on the training split. This diagnostic is provided for transparency and is not substituted for the primary fixed-0.5 hybrid comparison reported in the study.
 
-## Phase D: Monte Carlo sensitivity analysis
+## Phase D: controlled Gaussian sensitivity analysis
 
-**Script:** `experiments/phase_d_sensitivity.py`
+Script: `experiments/phase_d_sensitivity.py`
 
 Configuration:
 
-- seed `42`
-- embedding dimension `384`
-- 300 Monte Carlo runs per `(sigma, rho)` cell
-- 500 benign and 200 adversarial synthetic samples per run
-- benign Gaussian scale `0.10`
-- adversarial Gaussian scale `0.15`
-- adversarial mean-shift levels `0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50`
-- candidate threshold grid from `0.05` to `<0.50` in increments of `0.01`
-- dimension-normalized Euclidean distance
-- standard F1 computed within each Monte Carlo run from the declared 200 adversarial and 500 benign samples, then averaged across runs for each `(sigma, rho)` cell
+* base seed `42`
+* embedding dimension `384`
+* 300 Monte Carlo runs for each condition and mean-shift level
+* 500 benign and 200 adversarial synthetic samples per run
+* benign Gaussian scale `0.10`
+* equal-variance adversarial scale `0.10`
+* unequal-variance comparator adversarial scale `0.15`
+* mean-shift levels `0.00, 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50`
+* candidate threshold grid from `0.05` to less than `0.50` in increments of `0.01`
+* dimension-normalized Euclidean distance
+* common random numbers across the paired variance conditions
+* ROC AUC as the primary threshold-independent read-out
+* TPR, FPR, precision, recall, F1, and the mean-F1-at-least-0.95 threshold interval as secondary read-outs
 
-**Reference sweep:** `results/phase_d_reference_sweep.csv`
+The equal-variance condition isolates mean displacement. The unequal-variance comparator measures how much the scale difference contributes to separation. At zero mean shift, the equal-variance condition has mean AUC 0.516, while the unequal-variance comparator has mean AUC 1.000. Under equal variance, mean AUC is 0.988 at mean shift 0.05 and 1.000 from mean shift 0.10 onward. No equal-variance threshold reaches mean F1 at least 0.95 at mean shifts 0 or 0.05; the first qualifying interval is rho 0.11 to 0.13 at mean shift 0.10.
 
-The simulation is a stylized sensitivity analysis. It should not be interpreted as an empirical deployment benchmark.
+Canonical outputs:
+
+* `results/phase_d_auc_summary.csv`
+* `results/phase_d_threshold_summary.csv`
+* `results/phase_d_threshold_bands.csv`
+* `results/phase_d_condition_contrasts.csv`
+* `results/phase_d_sensitivity.json`
+
+The analysis was validated with Python 3.12.10, NumPy 2.3.5, PyTorch 2.6.0 with CUDA 12.4 build metadata, and scikit-learn 1.7.2, using CPU execution for Phase D. The committed global requirements remain the shared environment definition for all phases.
+
+The simulation remains a stylized sensitivity analysis. High-dimensional radial concentration makes modest per-coordinate shifts highly separable in this geometry, so the result is not an empirical deployment benchmark.
 
 ## Provenance map
 
-| Evidence block | Input | Script | Seed | Threshold rule | Canonical output |
-|---|---|---|---:|---|---|
-| Phase A family resampling | `data/phase_a_boundary_prompts.csv` | `experiments/phase_a_boundary.py` | 42 | Train Youden J | `results/paper_results_manifest.json` |
-| Phase A multi-domain stress | `data/phase_a_multidomain_prompts.csv` | `experiments/phase_a_boundary.py` | 4042 | Train Youden J | `results/paper_results_manifest.json` |
-| Phase A in-domain stress | `data/phase_a_in_domain_stress.csv` | `experiments/phase_a_boundary.py` | 10042 | Train Youden J | `results/paper_results_manifest.json` |
-| Phase B hold-out | Public TruthfulQA | `experiments/phase_b_response_integrity.py` | 42 | Train Youden J | `results/paper_results_manifest.json` |
-| Phase B repeated audit | Public TruthfulQA | `experiments/phase_b_response_integrity.py` | 7042 split bank | Train Youden J | `results/paper_results_manifest.json` |
-| Phase C original comparator | `data/phase_c_original_templates.csv` | `experiments/phase_c_exfiltration.py` | 8042 | DATM: train Youden J; hybrid: 0.5 | `results/phase_c_operating_points.json` |
-| Phase C paraphrastic stress | `data/phase_c_paraphrastic_templates.csv` | `experiments/phase_c_stress.py` | 3042 | DATM: train Youden J; hybrid: 0.5 | `results/paper_results_manifest.json` |
-| Phase C marker-scrubbed stress | `data/phase_c_marker_scrubbed_templates.csv` | `experiments/phase_c_stress.py` | 9042 | DATM: train Youden J; hybrid: 0.5 | `results/phase_c_operating_points.json` |
-| Phase D sensitivity sweep | Synthetic Gaussian draws | `experiments/phase_d_sensitivity.py` | 42 | Explicit rho grid | `results/phase_d_reference_sweep.csv` |
+* Phase A family resampling: input `data/phase_a_boundary_prompts.csv`, script `experiments/phase_a_boundary.py`, seed 42, training-split Youden J, canonical output `results/paper_results_manifest.json`.
+* Phase A multi-domain stress: input `data/phase_a_multidomain_prompts.csv`, script `experiments/phase_a_boundary.py`, seed 4042, training-split Youden J, canonical output `results/paper_results_manifest.json`.
+* Phase A in-domain stress: input `data/phase_a_in_domain_stress.csv`, script `experiments/phase_a_boundary.py`, seed 10042, training-split Youden J, canonical output `results/paper_results_manifest.json`.
+* Phase B hold-out: public TruthfulQA, script `experiments/phase_b_response_integrity.py`, seed 42, training-split Youden J, canonical output `results/paper_results_manifest.json`.
+* Phase B repeated audit: public TruthfulQA, script `experiments/phase_b_response_integrity.py`, split-bank seed 7042, training-split Youden J, canonical output `results/paper_results_manifest.json`.
+* Phase C original comparator: input `data/phase_c_original_templates.csv`, script `experiments/phase_c_exfiltration.py`, seed 8042, DATM training-split Youden J and hybrid threshold 0.5, canonical output `results/phase_c_operating_points.json`.
+* Phase C paraphrastic stress: input `data/phase_c_paraphrastic_templates.csv`, script `experiments/phase_c_stress.py`, seed 3042, canonical output `results/paper_results_manifest.json`.
+* Phase C marker-scrubbed stress: input `data/phase_c_marker_scrubbed_templates.csv`, script `experiments/phase_c_stress.py`, seed 9042, canonical output `results/phase_c_operating_points.json`.
+* Phase D sensitivity: synthetic Gaussian draws, script `experiments/phase_d_sensitivity.py`, seed 42, explicit rho grid, canonical outputs `results/phase_d_auc_summary.csv` and `results/phase_d_threshold_bands.csv`.
 
 ## Scope and interpretation
 
-The repository is designed to make the reported computational analyses inspectable and reproducible. It does not reproduce the retrospective enterprise incident evidence because those cases are based on cited public sources rather than generated datasets. It also does not claim that the bounded proxy and synthetic tasks establish enterprise deployment effectiveness, external validity, or calibrated production risk estimates.
+The repository makes the reported computational analyses inspectable and reproducible. It does not reproduce the retrospective enterprise incident evidence because those cases use cited public sources rather than generated datasets. The bounded proxy and synthetic tasks do not establish enterprise deployment effectiveness, external validity, or calibrated production risk estimates.

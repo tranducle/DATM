@@ -85,12 +85,17 @@ phase_c:
 phase_d:
   seed: 42
   dimension: 384
-  monte_carlo_runs_per_cell: 300
+  monte_carlo_runs_per_condition_shift: 300
   benign_samples_per_run: 500
   adversarial_samples_per_run: 200
   benign_scale: 0.10
-  adversarial_scale: 0.15
-  adversarial_mean_shift_levels: [0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50]
+  adversarial_scale_conditions:
+    equal_variance: 0.10
+    unequal_variance_comparator: 0.15
+  mean_shift_levels: [0.00, 0.05, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50]
+  common_random_numbers: true
+  primary_metric: "ROC AUC"
+  secondary_metrics: ["TPR", "FPR", "precision", "recall", "F1", "F1 threshold interval"]
   rho_min: 0.05
   rho_max_exclusive: 0.50
   rho_step: 0.01

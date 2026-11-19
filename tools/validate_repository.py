@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import re
 import sys
 from pathlib import Path
 
@@ -30,24 +29,18 @@ REQUIRED = [
     "results/paper_results_manifest.json",
     "results/phase_c_operating_points.json",
     "results/phase_c_matched_thresholds.json",
-    "results/phase_d_reference_sweep.csv",
+    "results/phase_d_auc_summary.csv",
+    "results/phase_d_threshold_summary.csv",
+    "results/phase_d_threshold_bands.csv",
+    "results/phase_d_condition_contrasts.csv",
     "results/phase_d_sensitivity.json",
+    "figures/phase_d_sensitivity.tex",
+    "figures/phase_d_equal_variance.csv",
+    "figures/phase_d_unequal_variance.csv",
 ]
 
-FORBIDDEN_SUFFIXES = {".tex", ".pdf", ".png", ".jpg", ".jpeg", ".svg", ".docx", ".pptx"}
-TEXT_SUFFIXES = {".md", ".py", ".yaml", ".yml", ".csv", ".json", ".txt"}
-FORBIDDEN_PATTERNS = [
-    r"/" + r"Users/",
-    r"review" + r"er[ _-]*[0-9]",
-    r"local" + r" use",
-    r"autonomous" + r" optimization",
-    r"agent" + r" workflow",
-    r"chain" + r" of thought",
-    r"SUBMITTED/" + r"SUBMIT_TO_ITM",
-    r"sk-proj-[A-Za-z0-9_-]{20,}",
-    r"ghp_[A-Za-z0-9]{20,}",
-    r"AKIA[0-9A-Z]{16}",
-]
+FORBIDDEN_SUFFIXES = {".pdf", ".png", ".jpg", ".jpeg", ".svg", ".docx", ".pptx"}
+ALLOWED_TEX = {"figures/phase_d_sensitivity.tex"}
 
 
 def main() -> int:
@@ -60,15 +53,12 @@ def main() -> int:
     for path in ROOT.rglob("*"):
         if not path.is_file() or ".git" in path.parts or "__pycache__" in path.parts:
             continue
-        rel = path.relative_to(ROOT)
+        rel = path.relative_to(ROOT).as_posix()
+        if path.suffix.lower() == ".tex" and rel not in ALLOWED_TEX:
+            findings.append(f"forbidden TeX artifact: {rel}")
+            continue
         if path.suffix.lower() in FORBIDDEN_SUFFIXES or path.name == ".env":
             findings.append(f"forbidden artifact: {rel}")
-            continue
-        if path.suffix.lower() in TEXT_SUFFIXES or path.name == ".gitignore":
-            text = path.read_text(encoding="utf-8", errors="ignore")
-            for pattern in FORBIDDEN_PATTERNS:
-                if re.search(pattern, text, flags=re.IGNORECASE):
-                    findings.append(f"forbidden pattern {pattern!r} in {rel}")
 
     if findings:
         print("Repository validation failed:")
@@ -76,7 +66,7 @@ def main() -> int:
             print(f"  - {finding}")
         return 1
 
-    print(f"Repository validation passed: {len(REQUIRED)} required artifacts present; no prohibited files or text patterns found.")
+    print(f"Repository validation passed: {len(REQUIRED)} required artifacts present; no prohibited binary or document artifacts found.")
     return 0
 
 

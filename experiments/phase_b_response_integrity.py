@@ -2,8 +2,9 @@
 
 TruthfulQA is loaded from its public Hugging Face dataset. The script reports
 one 408/409 question-level hold-out using the fixed multi-signal score and a
-bounded 240-question repeated audit comparing that score with contradiction-only
-scoring. Thresholds are selected on training questions and frozen on test data.
+bounded 240-question repeated audit comparing nine signal, aggregation, and
+incorrect-answer-cap variants across 100 repeated 120/120 train/test re-splits.
+Thresholds are selected on training questions and frozen on test data.
 """
 
 from __future__ import annotations
@@ -23,6 +24,62 @@ FULL_WEIGHTS = {
     "cosine_dist": 4.4,
     "length_ratio": 1.45,
 }
+ABLATION_SCHEMES = [
+    {
+        "name": "full_multi_signal_maxpool",
+        "weights": dict(FULL_WEIGHTS),
+        "aggregation": "max-pool",
+        "incorrect_cap": 10,
+    },
+    {
+        "name": "contradiction_only_maxpool",
+        "weights": {"contradiction": 1.0},
+        "aggregation": "max-pool",
+        "incorrect_cap": 10,
+    },
+    {
+        "name": "drop_length_ratio",
+        "weights": {"contradiction": 1.0, "entail_gap": 0.45, "cosine_dist": 4.4},
+        "aggregation": "max-pool",
+        "incorrect_cap": 10,
+    },
+    {
+        "name": "drop_cosine_dist",
+        "weights": {"contradiction": 1.0, "entail_gap": 0.45, "length_ratio": 1.45},
+        "aggregation": "max-pool",
+        "incorrect_cap": 10,
+    },
+    {
+        "name": "drop_entail_gap",
+        "weights": {"contradiction": 1.0, "cosine_dist": 4.4, "length_ratio": 1.45},
+        "aggregation": "max-pool",
+        "incorrect_cap": 10,
+    },
+    {
+        "name": "mean_pool_aggregation",
+        "weights": dict(FULL_WEIGHTS),
+        "aggregation": "mean-pool",
+        "incorrect_cap": 10,
+    },
+    {
+        "name": "top2_mean_aggregation",
+        "weights": dict(FULL_WEIGHTS),
+        "aggregation": "top2-mean",
+        "incorrect_cap": 10,
+    },
+    {
+        "name": "incorrect_cap_3",
+        "weights": dict(FULL_WEIGHTS),
+        "aggregation": "max-pool",
+        "incorrect_cap": 3,
+    },
+    {
+        "name": "incorrect_cap_1",
+        "weights": dict(FULL_WEIGHTS),
+        "aggregation": "max-pool",
+        "incorrect_cap": 1,
+    },
+]
 
 
 def load_truthfulqa() -> tuple[list[str], list[str], list[list[str]]]:
@@ -58,6 +115,17 @@ def length_ratios(questions: list[str], answers: list[str]) -> np.ndarray:
     return np.asarray([len(a.split()) / max(len(q.split()), 1) for q, a in zip(questions, answers)])
 
 
+def aggregate_scores(per_answer: np.ndarray, aggregation: str) -> float:
+    if aggregation == "max-pool":
+        return float(np.max(per_answer))
+    if aggregation == "mean-pool":
+        return float(np.mean(per_answer))
+    if aggregation == "top2-mean":
+        top_k = min(2, len(per_answer))
+        return float(np.mean(np.sort(per_answer)[-top_k:]))
+    raise ValueError(f"Unsupported aggregation: {aggregation}")
+
+
 def build_feature_store(questions, correct, incorrect, nli_model, emb_model):
     correct_nli = nli_scores(questions, correct, nli_model)
     correct_features = {
@@ -90,7 +158,15 @@ def fit_scalers(correct_features, incorrect_features, train_idx, keys, incorrect
     return result
 
 
-def combine(correct_features, incorrect_features, idx, scalers, weights, incorrect_cap):
+def combine(
+    correct_features,
+    incorrect_features,
+    idx,
+    scalers,
+    weights,
+    incorrect_cap,
+    aggregation: str = "max-pool",
+):
     weight_sum = float(sum(weights.values()))
     correct_scores, incorrect_scores = [], []
     for i in idx:
@@ -105,17 +181,25 @@ def combine(correct_features, incorrect_features, idx, scalers, weights, incorre
         for key, weight in weights.items():
             mean, std = scalers[key]
             per_answer += weight * ((incorrect_features[i][key][:n_answers] - mean) / std)
-        incorrect_scores.append(float(np.max(per_answer / weight_sum)))
+        incorrect_scores.append(aggregate_scores(per_answer / weight_sum, aggregation))
     return np.asarray(correct_scores), np.asarray(incorrect_scores)
 
 
-def evaluate_split(correct_features, incorrect_features, train_idx, test_idx, weights, incorrect_cap):
+def evaluate_split(
+    correct_features,
+    incorrect_features,
+    train_idx,
+    test_idx,
+    weights,
+    incorrect_cap,
+    aggregation: str = "max-pool",
+):
     scalers = fit_scalers(correct_features, incorrect_features, train_idx, list(weights), incorrect_cap)
     train_correct, train_incorrect = combine(
-        correct_features, incorrect_features, train_idx, scalers, weights, incorrect_cap
+        correct_features, incorrect_features, train_idx, scalers, weights, incorrect_cap, aggregation
     )
     test_correct, test_incorrect = combine(
-        correct_features, incorrect_features, test_idx, scalers, weights, incorrect_cap
+        correct_features, incorrect_features, test_idx, scalers, weights, incorrect_cap, aggregation
     )
     train_labels = np.concatenate([np.zeros(len(train_correct)), np.ones(len(train_incorrect))])
     train_scores = np.concatenate([train_correct, train_incorrect])
@@ -131,6 +215,7 @@ def evaluate_split(correct_features, incorrect_features, train_idx, test_idx, we
     return {
         "train_auc": train_auc,
         "threshold": threshold,
+        "threshold_selected_on_train": threshold,
         **metrics,
         "test_positive": int(np.sum(test_labels == 1)),
         "test_negative": int(np.sum(test_labels == 0)),
@@ -142,7 +227,10 @@ def evaluate_split(correct_features, incorrect_features, train_idx, test_idx, we
 
 
 def summarize_rows(rows):
-    return {key: summarize(row[key] for row in rows) for key in ["train_auc", "auc", "precision", "recall", "f1", "threshold"]}
+    return {
+        key: summarize(row[key] for row in rows)
+        for key in ["train_auc", "auc", "precision", "recall", "f1", "threshold_selected_on_train"]
+    }
 
 
 def run() -> dict[str, object]:
@@ -160,9 +248,9 @@ def run() -> dict[str, object]:
     rng.shuffle(idx)
     train_idx = np.sort(idx[:408])
     test_idx = np.sort(idx[408:])
-    holdout = evaluate_split(correct_features, incorrect_features, train_idx, test_idx, FULL_WEIGHTS, 10)
-    train_incorrect_candidates = int(sum(min(10, len(incorrect[i])) for i in train_idx))
-    test_incorrect_candidates = int(sum(min(10, len(incorrect[i])) for i in test_idx))
+    holdout = evaluate_split(correct_features, incorrect_features, train_idx, test_idx, FULL_WEIGHTS, MAX_INCORRECT)
+    train_incorrect_candidates = int(sum(min(MAX_INCORRECT, len(incorrect[i])) for i in train_idx))
+    test_incorrect_candidates = int(sum(min(MAX_INCORRECT, len(incorrect[i])) for i in test_idx))
 
     subset_rng = np.random.default_rng(SEED_BASE)
     subset_idx = np.arange(len(questions))
@@ -175,11 +263,28 @@ def run() -> dict[str, object]:
         split_rng.shuffle(local)
         split_bank.append((np.sort(local[:120]), np.sort(local[120:])))
 
-    full_rows = [evaluate_split(correct_features, incorrect_features, tr, te, FULL_WEIGHTS, 3) for tr, te in split_bank]
-    contradiction_rows = [
-        evaluate_split(correct_features, incorrect_features, tr, te, {"contradiction": 1.0}, 3)
-        for tr, te in split_bank
-    ]
+    schemes: dict[str, dict[str, object]] = {}
+    for cfg in ABLATION_SCHEMES:
+        rows = [
+            evaluate_split(
+                correct_features,
+                incorrect_features,
+                tr,
+                te,
+                cfg["weights"],
+                cfg["incorrect_cap"],
+                cfg["aggregation"],
+            )
+            for tr, te in split_bank
+        ]
+        schemes[cfg["name"]] = {
+            "config": {
+                "weights": dict(cfg["weights"]),
+                "aggregation": cfg["aggregation"],
+                "incorrect_cap": cfg["incorrect_cap"],
+            },
+            "summary": summarize_rows(rows),
+        }
 
     result = {
         "dataset": "truthfulqa/truthful_qa: generation/validation",
@@ -208,9 +313,10 @@ def run() -> dict[str, object]:
             "train_questions": 120,
             "test_questions": 120,
             "n_repetitions": 100,
-            "max_incorrect_answers_per_question": 3,
-            "full_multi_signal": summarize_rows(full_rows),
-            "contradiction_only": summarize_rows(contradiction_rows),
+            "default_max_incorrect_answers_per_question": MAX_INCORRECT,
+            "full_multi_signal": schemes["full_multi_signal_maxpool"]["summary"],
+            "contradiction_only": schemes["contradiction_only_maxpool"]["summary"],
+            "schemes": schemes,
         },
     }
     write_json("phase_b_results.json", result)

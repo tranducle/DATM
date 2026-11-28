@@ -57,12 +57,12 @@ The expected usable set contains 817 questions. For each question, the public `b
 
 **Script:** `experiments/phase_b_response_integrity.py`
 
-The multi-signal score uses:
+The multi-signal score uses fixed proof-of-concept coefficients carried from an exploratory 50-iteration prototype run (held constant across the hold-out split and repeated ablation audit rather than refit per split):
 
-- contradiction logit, weight `1.0`
-- contradiction-minus-entailment gap, weight `0.45`
-- question-answer cosine distance, weight `4.4`
-- answer-to-question length ratio, weight `1.45`
+- contradiction logit, weight `1.0` (normalized `0.137`)
+- contradiction-minus-entailment gap, weight `0.45` (normalized `0.062`)
+- question-answer cosine distance, weight `4.4` (normalized `0.603`)
+- answer-to-question length ratio, weight `1.45` (normalized `0.199`)
 
 Signal standardization is fitted using training questions only. Incorrect-answer scores are max-pooled at the question level.
 
@@ -83,12 +83,13 @@ The original Phase B run recorded the model identifiers but did not content-addr
 
 ### Bounded repeated audit
 
-- fixed 240-question subset selected from the public benchmark
+- fixed 240-question subset selected from the public benchmark with base seed `42`
 - 100 train/test re-splits
 - 120 training and 120 test questions per split
-- up to 3 incorrect answers per question
+- up to 10 listed incorrect answers per question by default (with caps of 3 and 1 evaluated as explicit ablation variants)
 - split-bank seed `7042`
-- compares the fixed four-signal fusion with contradiction-only scoring
+- evaluates nine variants: `full_multi_signal_maxpool`, `contradiction_only_maxpool`, `drop_length_ratio`, `drop_cosine_dist`, `drop_entail_gap`, `mean_pool_aggregation`, `top2_mean_aggregation`, `incorrect_cap_3`, and `incorrect_cap_1`
+- reports mean AUC and mean F1 with empirical 5th to 95th percentile ranges across the 100 re-splits (descriptive re-split stability ranges, not confidence intervals)
 
 **Canonical summary:** `results/paper_results_manifest.json`
 
@@ -108,7 +109,7 @@ The dataset contains 15 unique benign templates and 15 unique exfiltration templ
 - derived seed `8042`
 - DATM centroid threshold selected by Youden J on training data and frozen on test data
 - hybrid lexical comparator uses character 3-to-5 grams and word 1-to-2 grams with balanced logistic regression and fixed probability threshold `0.5`
-- regex proxy is retained as a transparent weak baseline
+- regex proxy is retained as a transparent discrete lexical baseline
 
 For the regex proxy, the graded match-count score yields mean AUC 0.970 across the 200 resamples. The training-selected threshold is 1.0, and ROC-consistent thresholding gives mean precision 1.000, recall 0.940, and F1 0.967.
 

@@ -41,6 +41,7 @@ phase_b:
     entail_gap: 0.45
     cosine_dist: 4.4
     length_ratio: 1.45
+  signal_weights_note: "Fixed proof-of-concept coefficients carried from an exploratory 50-iteration prototype run; normalized weights are (0.137, 0.062, 0.603, 0.199) and are held constant across hold-out and ablation splits"
   aggregation: "max-pool"
   normalization: "z-score parameters fitted on the training split only"
   threshold_selection: "maximize Youden J on training questions; freeze on test questions"
@@ -52,9 +53,19 @@ phase_b:
     subset_questions: 240
     train_questions: 120
     test_questions: 120
-    incorrect_answers_per_question: 3
+    default_max_incorrect_answers_per_question: 10
     repetitions: 100
     split_seed: 7042
+    ablation_variants:
+      - "full_multi_signal_maxpool"
+      - "contradiction_only_maxpool"
+      - "drop_length_ratio"
+      - "drop_cosine_dist"
+      - "drop_entail_gap"
+      - "mean_pool_aggregation"
+      - "top2_mean_aggregation"
+      - "incorrect_cap_3"
+      - "incorrect_cap_1"
 
 phase_c:
   original_templates:

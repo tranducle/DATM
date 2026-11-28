@@ -25,7 +25,7 @@ The `data/` directory contains synthetic study inputs. The `experiments/` direct
 
 Phase A evaluates a fixed benign-centroid distance score using constructed automotive and negative prompt families, followed by multi-domain benign-space and in-domain malicious stress tests.
 
-Phase B uses the public TruthfulQA validation split as a response-integrity proxy. The analysis compares a fixed multi-signal score with contradiction-only scoring under question-level hold-out and repeated bounded audits.
+Phase B uses the public TruthfulQA validation split as a response-integrity proxy. The analysis evaluates a fixed four-signal score under question-level hold-out and compares nine signal, aggregation, and incorrect-answer-cap ablation variants across repeated bounded audits.
 
 Phase C evaluates constructed benign and exfiltration templates with template-disjoint resampling. The original and marker-scrubbed comparisons use a hybrid word-plus-character lexical comparator. The auxiliary paraphrastic condition retains its historical character-ngram logistic comparator and a transparent regex proxy.
 

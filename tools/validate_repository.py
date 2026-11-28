@@ -10,8 +10,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 REQUIRED = [
     "README.md",
+    "DATA.md",
     "REPRODUCIBILITY.md",
     "requirements.txt",
+    "cases/case_extraction_worksheet.md",
+    "cases/case_extraction_worksheet.json",
     "configs/reproducibility.yaml",
     "data/phase_a_boundary_prompts.csv",
     "data/phase_a_multidomain_prompts.csv",
@@ -25,6 +28,7 @@ REQUIRED = [
     "experiments/phase_c_exfiltration.py",
     "experiments/phase_c_stress.py",
     "experiments/phase_d_sensitivity.py",
+    "tools/test_case_worksheet.py",
     "tools/test_phase_a_protocol.py",
     "tools/test_phase_b_reporting.py",
     "tools/test_phase_c_regex.py",

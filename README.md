@@ -1,16 +1,18 @@
 # Dynamic Algorithmic Threat Modeling (DATM)
 
-This repository contains the computational reproducibility materials for a study of Dynamic Algorithmic Threat Modeling (DATM) for enterprise generative-AI governance. It is limited to experimental code, constructed prompt and template sets, configuration, canonical numerical outputs, and the source for the Phase D sensitivity figure.
+This repository contains the reproducibility materials for a study of Dynamic Algorithmic Threat Modeling (DATM) for enterprise generative-AI governance. It includes the experimental code, constructed prompt and template sets, configuration, canonical numerical outputs, the source for the Phase D sensitivity figure, and the structured five-field case-extraction worksheet for the three retrospective incidents cited in the manuscript.
 
-The computational evidence is bounded. It covers controlled domain-boundary tests, a TruthfulQA response-integrity proxy, synthetic exfiltration-template evaluations, and a controlled Gaussian sensitivity analysis. These materials reproduce the reported computational illustrations. They are not a production security system or evidence of enterprise deployment readiness.
+The computational evidence is bounded. It covers controlled domain-boundary tests, a TruthfulQA response-integrity proxy, synthetic exfiltration-template evaluations, and a controlled Gaussian sensitivity analysis. The retrospective case worksheet records manual extractions strictly bounded to the four public sources cited in the manuscript (one primary legal decision and three secondary press articles) rather than private corporate logs, dealership transcripts, or internal memos. These materials support transparent inspection and computational reproduction. They are not a production security system or evidence of enterprise deployment readiness.
 
 ## Repository structure
 
 ```text
 .
 | README.md
+| DATA.md
 | REPRODUCIBILITY.md
 | requirements.txt
+| cases/
 | configs/
 | data/
 | experiments/
@@ -19,7 +21,7 @@ The computational evidence is bounded. It covers controlled domain-boundary test
 | tools/
 ```
 
-The `data/` directory contains synthetic study inputs. The `experiments/` directory contains one script per computational phase. Canonical numerical outputs are under `results/`. The `figures/` directory contains the standalone TikZ source and exact CSV inputs for the Phase D sensitivity figure.
+The `cases/` directory contains the Markdown and JSON versions of the five-field retrospective case-extraction worksheet (`cases/case_extraction_worksheet.md` and `cases/case_extraction_worksheet.json`). The `data/` directory contains synthetic study inputs. The `experiments/` directory contains one script per computational phase. Canonical numerical outputs are under `results/`. The `figures/` directory contains the standalone TikZ source and exact CSV inputs for the Phase D sensitivity figure.
 
 ## Experimental phases
 
@@ -56,6 +58,7 @@ Phase B downloads TruthfulQA through the Hugging Face `datasets` interface. The 
 Run the repository checks with:
 
 ```bash
+python tools/test_case_worksheet.py
 python tools/test_phase_a_protocol.py
 python tools/test_phase_b_reporting.py
 python tools/test_phase_c_regex.py

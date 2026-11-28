@@ -20,6 +20,10 @@ python experiments/phase_d_sensitivity.py
 
 Regenerated Phase D outputs are written under `results/generated/`, which is excluded from version control. The canonical committed summaries remain unchanged unless a verified analysis update is intentionally released.
 
+## Retrospective case-extraction worksheet
+
+`cases/case_extraction_worksheet.md` and `cases/case_extraction_worksheet.json` record the structured five-field manual extraction for the three retrospective enterprise GenAI incidents analyzed in the manuscript (Air Canada, Chevrolet, and Samsung). Every entry is bounded to the four public sources cited in the manuscript: one primary tribunal ruling (Air Canada) and three secondary press articles (one Business Insider article for Chevrolet and two articles from The Register for Samsung). No primary dealership transcript, primary internal Samsung memo, or private incident dataset is included or claimed.
+
 ## Data provenance
 
-`REPRODUCIBILITY.md` records the source, split rules, seeds, thresholds, and canonical output for each computational phase. `configs/reproducibility.yaml` provides the corresponding machine-readable configuration.
+`REPRODUCIBILITY.md` records the source, split rules, seeds, thresholds, and canonical output for each computational phase as well as the provenance scope of the retrospective case-extraction worksheet. `configs/reproducibility.yaml` provides the corresponding machine-readable experimental configuration.

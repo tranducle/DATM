@@ -1,0 +1,133 @@
+{
+  "artifact_type": "retrospective_case_extraction_worksheet",
+  "protocol_version": "r2_r1_5",
+  "scope_note": "Structured five-field manual extraction for the three retrospective enterprise GenAI incidents analyzed in Section 5.2 and Section 5.3. All entries are strictly bounded to the four public sources cited in the manuscript. This artifact is not a primary forensic dossier, does not include private organizational records, and does not assert access to unreferenced transcripts or internal corporate memos.",
+  "inclusion_criteria_summary": {
+    "criterion_1_enterprise_deployment": "Incident occurred within a deployed enterprise or customer-facing organizational workflow.",
+    "criterion_2_semantically_mediated_channel": "Incident involved semantically mediated failure through an authorized or intended interaction channel rather than a conventional network compromise.",
+    "criterion_3_public_source_basis": "Publicly documented evidence sufficient for structured retrospective analytic reconstruction, drawing on primary legal or official records where publicly available (Air Canada) and contemporaneous secondary business or technology press reporting where primary corporate records are non-public (Chevrolet and Samsung)."
+  },
+  "corpus_evidence_summary": {
+    "total_cases": 3,
+    "cases_with_primary_material": 1,
+    "cases_with_secondary_reporting_only": 2,
+    "total_cited_sources": 4,
+    "total_primary_sources": 1,
+    "total_secondary_sources": 3
+  },
+  "required_extraction_fields": [
+    "actor_and_access_path",
+    "prompt_or_payload_characteristics",
+    "documented_organizational_consequences",
+    "intact_deterministic_controls",
+    "datm_relevant_runtime_behavior"
+  ],
+  "cases": [
+    {
+      "case_id": "air_canada",
+      "case_label": "Air Canada",
+      "incident_title": "Air Canada Passenger Chatbot (Autonomous Integrity Failure)",
+      "evidence_tier": "primary_legal_record",
+      "primary_material_available": true,
+      "primary_source_count": 1,
+      "secondary_source_count": 0,
+      "cited_sources": [
+        {
+          "bib_key": "moffatt2024aircanada",
+          "source_class": "primary_legal_ruling",
+          "author_or_body": "British Columbia Civil Resolution Tribunal",
+          "title": "Moffatt v. Air Canada, 2024 BCCRT 149",
+          "venue": "Canadian Legal Information Institute (CanLII)",
+          "date": "2024-02",
+          "url": "https://www.canlii.org/en/bc/bccrt/doc/2024/2024bccrt149/2024bccrt149.html"
+        }
+      ],
+      "unavailable_primary_artifacts": [
+        "Proprietary chatbot runtime telemetry, prompt configuration, and internal model logs are not part of the public tribunal decision"
+      ],
+      "provenance_limit": "Grounded in one public tribunal decision (2024 BCCRT 149). No corroborating secondary press reports are cited in the manuscript, and no proprietary system logs or historical replay are available.",
+      "extracted_fields": {
+        "actor_and_access_path": "Customer interacting with Air Canada's public customer-service chatbot on the airline's website through the intended external support channel.",
+        "prompt_or_payload_characteristics": "Routine passenger inquiry about bereavement-fare eligibility; the chatbot generated inaccurate guidance describing a non-existent retroactive bereavement-fare policy contradicting Air Canada's published webpage policy.",
+        "documented_organizational_consequences": "Customer financial loss after relying on the inaccurate chatbot guidance and an adverse British Columbia Civil Resolution Tribunal ruling holding Air Canada liable (Moffatt v. Air Canada, 2024 BCCRT 149).",
+        "intact_deterministic_controls": "Conventional website access controls and system integrity boundaries remained formally intact; the tribunal record describes inaccurate chatbot output rather than an external attacker modifying code or infrastructure.",
+        "datm_relevant_runtime_behavior": "Divergence between policy-authorized bereavement guidance (y_pol) and observed chatbot output (y_exec), illustrating Drift Frequency V(t) and Continuous Intent Auditing as an analytic lens rather than proof of historical prevention."
+      }
+    },
+    {
+      "case_id": "chevrolet",
+      "case_label": "Chevrolet",
+      "incident_title": "Chevrolet Dealership Chatbot (Semantic Prompt Injection)",
+      "evidence_tier": "secondary_news_report",
+      "primary_material_available": false,
+      "primary_source_count": 0,
+      "secondary_source_count": 1,
+      "cited_sources": [
+        {
+          "bib_key": "coldewey2023chevy",
+          "source_class": "secondary_news_article",
+          "author_or_body": "Notopoulos, Katie",
+          "title": "A Car Dealership Added an AI Chatbot to Its Site. Then All Hell Broke Loose",
+          "venue": "Business Insider",
+          "date": "2023-12",
+          "url": "https://www.businessinsider.com/car-dealership-chevrolet-chatbot-chatgpt-pranks-chevy-2023-12"
+        }
+      ],
+      "unavailable_primary_artifacts": [
+        "Primary dealership chatbot server transcript",
+        "Chatbot vendor prompt configuration and API logs",
+        "Official dealership or vendor incident report"
+      ],
+      "provenance_limit": "Supported solely by one secondary news article (Notopoulos, Business Insider, December 2023). No primary dealership injection transcript, vendor log, or independent corroborating source is cited or held; all incident details remain bounded to public press reporting.",
+      "extracted_fields": {
+        "actor_and_access_path": "As reported in public business-press coverage, an external user interacting with a Chevrolet dealership's public customer-service chatbot through its intended web chat interface.",
+        "prompt_or_payload_characteristics": "Reported natural-language instructions telling the chatbot to agree with the user's statements and append a 'legally binding offer' phrase, followed by a reported $1 offer for a 2024 Chevrolet Tahoe.",
+        "documented_organizational_consequences": "Reported generation of an unintended '$1 legally binding offer' response in a public customer-facing channel, creating reputational exposure and demonstrating unguarded conversational drift.",
+        "intact_deterministic_controls": "The reported manipulation used ordinary natural-language instructions through the public chatbot's intended interface rather than a conventional software exploit or perimeter compromise.",
+        "datm_relevant_runtime_behavior": "Natural-language instructions shifting a domain-scoped dealership assistant away from benign automotive inquiries, illustrating Probabilistic Boundary Mapping (Equation 2) and motivating the constructed Phase A analog (not a historical replay)."
+      }
+    },
+    {
+      "case_id": "samsung",
+      "case_label": "Samsung",
+      "incident_title": "Samsung ChatGPT Integration (Ingestion-Based Data Exfiltration)",
+      "evidence_tier": "secondary_trade_press",
+      "primary_material_available": false,
+      "primary_source_count": 0,
+      "secondary_source_count": 2,
+      "cited_sources": [
+        {
+          "bib_key": "dobberstein2023samsung",
+          "source_class": "secondary_trade_press_article",
+          "author_or_body": "Dobberstein, Laura",
+          "title": "Samsung Reportedly Leaked Its Own Secrets through ChatGPT",
+          "venue": "The Register",
+          "date": "2023-04",
+          "url": "https://www.theregister.com/software/2023/04/06/samsung-reportedly-leaked-its-own-secrets-through-chatgpt/895536"
+        },
+        {
+          "bib_key": "karabus2023samsungban",
+          "source_class": "secondary_trade_press_article",
+          "author_or_body": "Karabus, Jude",
+          "title": "Samsung Puts ChatGPT Back in the Box after 'Code Leak'",
+          "venue": "The Register",
+          "date": "2023-05",
+          "url": "https://www.theregister.com/software/2023/05/02/samsung-to-ban-staff-from-using-chatgpt-after-code-leak/655856"
+        }
+      ],
+      "unavailable_primary_artifacts": [
+        "Primary Samsung internal corporate memo",
+        "Internal data-loss-prevention or network telemetry logs",
+        "Official primary corporate incident disclosure"
+      ],
+      "provenance_limit": "Supported solely by two secondary trade-press reports from the same publication (The Register, April and May 2023). No primary Samsung internal memo or corporate disclosure is cited or held; all incident details remain hedged as reported.",
+      "extracted_fields": {
+        "actor_and_access_path": "As reported in trade-press coverage, authorized Samsung employees using an external generative-AI service (ChatGPT) during work tasks.",
+        "prompt_or_payload_characteristics": "Employees reportedly entered sensitive source code, equipment-related information, and meeting records into prompts submitted to ChatGPT.",
+        "documented_organizational_consequences": "Reported external disclosure of sensitive internal material, followed by a reported temporary restriction on staff use of external generative-AI tools.",
+        "intact_deterministic_controls": "The reported leakage occurred because authorized employees themselves submitted sensitive content through an external AI service rather than because an attacker breached a classic network perimeter.",
+        "datm_relevant_runtime_behavior": "Authorized-channel semantic transmission of protected code-like or internal material without a perimeter intrusion, illustrating combined boundary and intent auditing in DATM and motivating the constructed Phase C synthetic analog."
+      }
+    }
+  ]
+}

@@ -175,6 +175,7 @@ The simulation remains a stylized sensitivity analysis. High-dimensional radial 
 
 ## Provenance map
 
+* Retrospective case strand: structured five-field extraction worksheet in `cases/case_extraction_worksheet.md` and `cases/case_extraction_worksheet.json`, validated by `tools/test_case_worksheet.py` (strictly bounded to 1 primary legal ruling for Air Canada, 1 secondary Business Insider article for Chevrolet, and 2 secondary Register articles for Samsung; no primary dealership transcript or internal Samsung memo is held or cited).
 * Phase A family resampling: input `data/phase_a_boundary_prompts.csv`, script `experiments/phase_a_boundary.py`, seed 42, training-split Youden J, canonical output `results/paper_results_manifest.json`.
 * Phase A multi-domain stress: input `data/phase_a_multidomain_prompts.csv`, script `experiments/phase_a_boundary.py`, seed 4042, training-split Youden J, canonical output `results/paper_results_manifest.json`.
 * Phase A in-domain stress: input `data/phase_a_in_domain_stress.csv`, script `experiments/phase_a_boundary.py`, seed 10042, training-split Youden J, canonical output `results/paper_results_manifest.json`.
@@ -187,4 +188,4 @@ The simulation remains a stylized sensitivity analysis. High-dimensional radial 
 
 ## Scope and interpretation
 
-The repository makes the reported computational analyses inspectable and reproducible. It does not reproduce the retrospective enterprise incident evidence because those cases use cited public sources rather than generated datasets. The bounded proxy and synthetic tasks do not establish enterprise deployment effectiveness, external validity, or calibrated production risk estimates.
+The repository makes the reported computational analyses inspectable and reproducible and exposes the structured five-field manual extraction worksheet (`cases/case_extraction_worksheet.md` and `cases/case_extraction_worksheet.json`) used for the retrospective case strand. Only Air Canada rests on a primary legal ruling; Chevrolet and Samsung rely solely on secondary press reports, and the worksheet does not include primary corporate transcripts, internal memos, or private incident datasets. The bounded proxy and synthetic tasks do not establish enterprise deployment effectiveness, external validity, or calibrated production risk estimates.

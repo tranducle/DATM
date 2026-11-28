@@ -24,7 +24,7 @@ All entries are strictly bounded to the four public sources cited in the manuscr
   2. **Prompt or payload characteristics:** Routine passenger inquiry about bereavement-fare eligibility; the chatbot generated inaccurate guidance describing a non-existent retroactive bereavement-fare policy contradicting Air Canada's published webpage policy.
   3. **Documented organizational consequences:** Customer financial loss after relying on the inaccurate chatbot guidance and an adverse British Columbia Civil Resolution Tribunal ruling holding Air Canada liable (*Moffatt v. Air Canada*, 2024 BCCRT 149).
   4. **Deterministic controls that remained formally intact:** Conventional website access controls and system integrity boundaries remained formally intact; the tribunal record describes inaccurate chatbot output rather than an external attacker modifying code or infrastructure.
-  5. **DATM-relevant runtime behavior:** Divergence between policy-authorized bereavement guidance (`y_pol`) and observed chatbot output (`y_exec`), illustrating Drift Frequency `V(t)` and Continuous Intent Auditing as an analytic lens rather than proof of historical prevention.
+  5. **DATM-relevant runtime behavior:** Divergence between policy-authorized bereavement guidance (`y_pol`) and observed chatbot output (`y_exec`), illustrating the drift-frequency dimension of Generative Dissonance and Continuous Intent Auditing as an analytic lens rather than proof of historical prevention.
 
 ## Case 2: Chevrolet Dealership Chatbot (Semantic Prompt Injection)
 
@@ -38,7 +38,7 @@ All entries are strictly bounded to the four public sources cited in the manuscr
   2. **Prompt or payload characteristics:** Reported natural-language instructions telling the chatbot to agree with the user's statements and append a "legally binding offer" phrase, followed by a reported $1 offer for a 2024 Chevrolet Tahoe.
   3. **Documented organizational consequences:** Reported generation of an unintended "$1 legally binding offer" response in a public customer-facing channel, creating reputational exposure and demonstrating unguarded conversational drift.
   4. **Deterministic controls that remained formally intact:** The reported manipulation used ordinary natural-language instructions through the public chatbot's intended interface rather than a conventional software exploit or perimeter compromise.
-  5. **DATM-relevant runtime behavior:** Natural-language instructions shifting a domain-scoped dealership assistant away from benign automotive inquiries, illustrating Probabilistic Boundary Mapping (Equation 2) and motivating the constructed Phase A analog (not a historical replay).
+  5. **DATM-relevant runtime behavior:** Natural-language instructions shifting a domain-scoped dealership assistant away from benign automotive inquiries, illustrating Probabilistic Boundary Mapping (Equation 1) and motivating the constructed Phase A analog (not a historical replay).
 
 ## Case 3: Samsung ChatGPT Integration (Ingestion-Based Data Exfiltration)
 

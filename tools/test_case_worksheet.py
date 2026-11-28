@@ -109,6 +109,8 @@ def main() -> int:
         assert not prohibited_dash.search(text), f"Prohibited dash sequence in {path.name}"
         assert "auditable chain of evidence" not in text.lower(), f"Overclaimed chain phrase in {path.name}"
         assert "forensic reconstruction" not in text.lower(), f"Overclaimed forensic phrase in {path.name}"
+        assert "v(t)" not in text.lower(), f"Retired Eq. 1 symbol V(t) present in {path.name}"
+        assert "equation 2" not in text.lower(), f"Stale Equation 2 reference present in {path.name}"
 
     print("Case extraction worksheet checks passed: 3 cases, 5 fields each, 1 primary / 2 secondary-only verified.")
     return 0

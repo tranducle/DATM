@@ -51,7 +51,7 @@
         "prompt_or_payload_characteristics": "Routine passenger inquiry about bereavement-fare eligibility; the chatbot generated inaccurate guidance describing a non-existent retroactive bereavement-fare policy contradicting Air Canada's published webpage policy.",
         "documented_organizational_consequences": "Customer financial loss after relying on the inaccurate chatbot guidance and an adverse British Columbia Civil Resolution Tribunal ruling holding Air Canada liable (Moffatt v. Air Canada, 2024 BCCRT 149).",
         "intact_deterministic_controls": "Conventional website access controls and system integrity boundaries remained formally intact; the tribunal record describes inaccurate chatbot output rather than an external attacker modifying code or infrastructure.",
-        "datm_relevant_runtime_behavior": "Divergence between policy-authorized bereavement guidance (y_pol) and observed chatbot output (y_exec), illustrating Drift Frequency V(t) and Continuous Intent Auditing as an analytic lens rather than proof of historical prevention."
+        "datm_relevant_runtime_behavior": "Divergence between policy-authorized bereavement guidance (y_pol) and observed chatbot output (y_exec), illustrating the drift-frequency dimension of Generative Dissonance and Continuous Intent Auditing as an analytic lens rather than proof of historical prevention."
       }
     },
     {
@@ -84,7 +84,7 @@
         "prompt_or_payload_characteristics": "Reported natural-language instructions telling the chatbot to agree with the user's statements and append a 'legally binding offer' phrase, followed by a reported $1 offer for a 2024 Chevrolet Tahoe.",
         "documented_organizational_consequences": "Reported generation of an unintended '$1 legally binding offer' response in a public customer-facing channel, creating reputational exposure and demonstrating unguarded conversational drift.",
         "intact_deterministic_controls": "The reported manipulation used ordinary natural-language instructions through the public chatbot's intended interface rather than a conventional software exploit or perimeter compromise.",
-        "datm_relevant_runtime_behavior": "Natural-language instructions shifting a domain-scoped dealership assistant away from benign automotive inquiries, illustrating Probabilistic Boundary Mapping (Equation 2) and motivating the constructed Phase A analog (not a historical replay)."
+        "datm_relevant_runtime_behavior": "Natural-language instructions shifting a domain-scoped dealership assistant away from benign automotive inquiries, illustrating Probabilistic Boundary Mapping (Equation 1) and motivating the constructed Phase A analog (not a historical replay)."
       }
     },
     {
